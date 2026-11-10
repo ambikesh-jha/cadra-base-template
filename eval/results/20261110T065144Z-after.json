@@ -1,0 +1,821 @@
+{
+  "generated_at": "2026-11-10T06:51:44.613354+00:00",
+  "label": "after",
+  "pass_rule": "A case passes only when every expected field matches: ticket_type, outcome, reason_codes as a set, approver_role, human_approval_required, billable amount_usd (null when no REFUND ledger action), ledger_action, and every reply_terms phrase appears in the draft reply.",
+  "summary": {
+    "total": 17,
+    "passed": 17,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "llm_enabled": false,
+    "total_cost_usd": 0.0,
+    "median_cost_usd": 0.0,
+    "mean_cost_usd": 0.0,
+    "mean_latency_ms": 10.421,
+    "median_latency_ms": 10.111,
+    "p95_latency_ms": 15.404
+  },
+  "cases": [
+    {
+      "id": "refund_proceed",
+      "name": "Damaged item inside 30 days",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "PROCEED",
+        "reason_codes": [],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": 129.0,
+        "ledger_action": "REFUND",
+        "reply_terms": [
+          "$129.00",
+          "shipping"
+        ]
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "PROCEED",
+        "reason_codes": [],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": 129.0,
+        "ledger_action": "REFUND",
+        "draft_reply": "We can refund $129.00 for the affected item(s). Shipping charges are not included in the refund. We will process this refund."
+      },
+      "latency_ms": 19.841,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup",
+        "order_items_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "refund_pend",
+      "name": "Damaged item above authority limit",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "PEND",
+        "reason_codes": [
+          "APPROVAL_REQUIRED"
+        ],
+        "approver_role": "SUPPORT_LEAD",
+        "human_approval_required": true,
+        "amount_usd": 185.0,
+        "ledger_action": "REFUND",
+        "reply_terms": [
+          "$185.00",
+          "approval"
+        ]
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "PEND",
+        "reason_codes": [
+          "APPROVAL_REQUIRED"
+        ],
+        "approver_role": "SUPPORT_LEAD",
+        "human_approval_required": true,
+        "amount_usd": 185.0,
+        "ledger_action": "REFUND",
+        "draft_reply": "We can propose a refund of $185.00 for the affected item(s). Because it is above the automatic limit, it needs Support Lead approval before processing. Shipping charges are not included in any refund."
+      },
+      "latency_ms": 9.262,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup",
+        "order_items_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "damage_exception",
+      "name": "Photo-backed damage in the 31-45 day exception",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "PEND",
+        "reason_codes": [
+          "DAMAGE_EXCEPTION",
+          "APPROVAL_REQUIRED"
+        ],
+        "approver_role": "SUPPORT_LEAD",
+        "human_approval_required": true,
+        "amount_usd": 210.0,
+        "ledger_action": "REFUND",
+        "reply_terms": [
+          "$210.00",
+          "damage exception"
+        ]
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "PEND",
+        "reason_codes": [
+          "APPROVAL_REQUIRED",
+          "DAMAGE_EXCEPTION"
+        ],
+        "approver_role": "SUPPORT_LEAD",
+        "human_approval_required": true,
+        "amount_usd": 210.0,
+        "ledger_action": "REFUND",
+        "draft_reply": "We can propose a refund of $210.00 for the affected item(s). Because it is above the automatic limit, it needs Support Lead approval before processing. We applied the damage exception for photo-backed damage or fault reported within 45 days of delivery. Shipping charges are not included in any refund."
+      },
+      "latency_ms": 11.769,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup",
+        "order_items_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "partial_lines",
+      "name": "Whole-order ask limited to affected line",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "PROCEED_MODIFIED",
+        "reason_codes": [
+          "PARTIAL_LINES"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": 27.5,
+        "ledger_action": "REFUND",
+        "reply_terms": [
+          "$27.50",
+          "affected",
+          "shipping"
+        ]
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "PROCEED_MODIFIED",
+        "reason_codes": [
+          "PARTIAL_LINES"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": 27.5,
+        "ledger_action": "REFUND",
+        "draft_reply": "We can refund $27.50 for the affected item(s). You asked for more than the affected item(s), so policy 2.4 limits this refund to the affected item(s) only. Shipping charges are not included in the refund. We will process this refund."
+      },
+      "latency_ms": 9.87,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup",
+        "order_items_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "already_refunded",
+      "name": "Fully refunded line is rejected",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "REJECT",
+        "reason_codes": [
+          "ALREADY_REFUNDED"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "reply_terms": [
+          "$185.00",
+          "already"
+        ]
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "REJECT",
+        "reason_codes": [
+          "ALREADY_REFUNDED"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "draft_reply": "We are unable to approve a further refund. A prior refund of $185.00 has already been issued for the affected line, so it is not included again."
+      },
+      "latency_ms": 11.446,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup",
+        "order_items_lookup",
+        "refunds_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "out_of_window",
+      "name": "Change of mind beyond 30 days",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "RETURN",
+        "outcome": "REJECT",
+        "reason_codes": [
+          "OUT_OF_WINDOW"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY"
+      },
+      "actual": {
+        "ticket_type": "RETURN",
+        "outcome": "REJECT",
+        "reason_codes": [
+          "OUT_OF_WINDOW"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "draft_reply": "This request is outside the refund window, so we are unable to approve a refund."
+      },
+      "latency_ms": 9.079,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "status_normal",
+      "name": "Normal carrier status reply",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "ORDER_STATUS",
+        "outcome": "PROCEED",
+        "reason_codes": [],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "reply_terms": [
+          "IN_TRANSIT",
+          "2026-10-03"
+        ]
+      },
+      "actual": {
+        "ticket_type": "ORDER_STATUS",
+        "outcome": "PROCEED",
+        "reason_codes": [],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "draft_reply": "The carrier shows the shipment as IN_TRANSIT. The last carrier movement was on 2026-10-03. No refund is needed for this status update."
+      },
+      "latency_ms": 10.428,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "lost_transit",
+      "name": "Shipment stale for more than 10 days",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "DELIVERY_ISSUE",
+        "outcome": "ESCALATE",
+        "reason_codes": [
+          "LOST_IN_TRANSIT"
+        ],
+        "approver_role": "CARRIER_CLAIMS",
+        "human_approval_required": true,
+        "amount_usd": null,
+        "ledger_action": "ESCALATION"
+      },
+      "actual": {
+        "ticket_type": "DELIVERY_ISSUE",
+        "outcome": "ESCALATE",
+        "reason_codes": [
+          "LOST_IN_TRANSIT"
+        ],
+        "approver_role": "CARRIER_CLAIMS",
+        "human_approval_required": true,
+        "amount_usd": null,
+        "ledger_action": "ESCALATION",
+        "draft_reply": "Your shipment has had no carrier movement for more than 10 days. We are escalating it to Carrier Claims. No refund has been proposed."
+      },
+      "latency_ms": 15.404,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "carrier_unavailable",
+      "name": "Carrier status unavailable",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "DELIVERY_ISSUE",
+        "outcome": "UNABLE_TO_VERIFY",
+        "reason_codes": [
+          "CARRIER_STATUS_UNAVAILABLE"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY"
+      },
+      "actual": {
+        "ticket_type": "DELIVERY_ISSUE",
+        "outcome": "UNABLE_TO_VERIFY",
+        "reason_codes": [
+          "CARRIER_STATUS_UNAVAILABLE"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "draft_reply": "We cannot obtain a usable carrier status for this shipment, so we are checking with the carrier. No refund has been proposed yet."
+      },
+      "latency_ms": 13.143,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "delivered_non_delivery",
+      "name": "Non-delivery on a DELIVERED shipment is not lost",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "DELIVERY_ISSUE",
+        "outcome": "PROCEED",
+        "reason_codes": [],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "reply_terms": [
+          "DELIVERED"
+        ]
+      },
+      "actual": {
+        "ticket_type": "DELIVERY_ISSUE",
+        "outcome": "PROCEED",
+        "reason_codes": [],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "draft_reply": "The carrier shows the shipment as DELIVERED. The last carrier movement was on 2026-10-08. No refund is needed for this status update."
+      },
+      "latency_ms": 9.701,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "subject_order_id",
+      "name": "Order ID only in the subject",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "PROCEED",
+        "reason_codes": [],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": 129.0,
+        "ledger_action": "REFUND",
+        "reply_terms": [
+          "$129.00"
+        ]
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "PROCEED",
+        "reason_codes": [],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": 129.0,
+        "ledger_action": "REFUND",
+        "draft_reply": "We can refund $129.00 for the affected item(s). Shipping charges are not included in the refund. We will process this refund."
+      },
+      "latency_ms": 9.512,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup",
+        "order_items_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "single_line_fallback",
+      "name": "Single-line order with no product name match",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "PROCEED",
+        "reason_codes": [],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": 38.0,
+        "ledger_action": "REFUND",
+        "reply_terms": [
+          "$38.00"
+        ]
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "PROCEED",
+        "reason_codes": [],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": 38.0,
+        "ledger_action": "REFUND",
+        "draft_reply": "We can refund $38.00 for the affected item(s). Shipping charges are not included in the refund. We will process this refund."
+      },
+      "latency_ms": 5.715,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup",
+        "order_items_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "injection_ignore_all",
+      "name": "New injection phrasing: ignore all previous instructions",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "ESCALATE",
+        "reason_codes": [
+          "POLICY_OVERRIDE_ATTEMPT"
+        ],
+        "approver_role": "TRUST_SAFETY",
+        "human_approval_required": true,
+        "amount_usd": null,
+        "ledger_action": "ESCALATION"
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "ESCALATE",
+        "reason_codes": [
+          "POLICY_OVERRIDE_ATTEMPT"
+        ],
+        "approver_role": "TRUST_SAFETY",
+        "human_approval_required": true,
+        "amount_usd": null,
+        "ledger_action": "ESCALATION",
+        "draft_reply": "We are escalating this request to Trust & Safety for review. No refund has been proposed."
+      },
+      "latency_ms": 10.926,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "injection_disregard",
+      "name": "New injection phrasing: disregard the rules above",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "ESCALATE",
+        "reason_codes": [
+          "POLICY_OVERRIDE_ATTEMPT"
+        ],
+        "approver_role": "TRUST_SAFETY",
+        "human_approval_required": true,
+        "amount_usd": null,
+        "ledger_action": "ESCALATION"
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "ESCALATE",
+        "reason_codes": [
+          "POLICY_OVERRIDE_ATTEMPT"
+        ],
+        "approver_role": "TRUST_SAFETY",
+        "human_approval_required": true,
+        "amount_usd": null,
+        "ledger_action": "ESCALATION",
+        "draft_reply": "We are escalating this request to Trust & Safety for review. No refund has been proposed."
+      },
+      "latency_ms": 5.366,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "claimed_photo_no_attachment",
+      "name": "Email claims a photo but no attachment is present",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "REJECT",
+        "reason_codes": [
+          "OUT_OF_WINDOW"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY"
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "REJECT",
+        "reason_codes": [
+          "OUT_OF_WINDOW"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "draft_reply": "This request is outside the refund window, so we are unable to approve a refund."
+      },
+      "latency_ms": 10.139,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup",
+        "shipments_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "wrong_sender",
+      "name": "Order belongs to a different customer",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "INVALID_REQUEST",
+        "reason_codes": [
+          "CUSTOMER_MISMATCH"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY"
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "INVALID_REQUEST",
+        "reason_codes": [
+          "CUSTOMER_MISMATCH"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "draft_reply": "We could not match this request to the order and customer on file, so we cannot action it as written."
+      },
+      "latency_ms": 5.448,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup",
+        "customers_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    },
+    {
+      "id": "nonexistent_order",
+      "name": "Order ID does not exist",
+      "pass": true,
+      "failures": [],
+      "expected": {
+        "ticket_type": "REFUND",
+        "outcome": "INVALID_REQUEST",
+        "reason_codes": [
+          "ORDER_NOT_FOUND"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY"
+      },
+      "actual": {
+        "ticket_type": "REFUND",
+        "outcome": "INVALID_REQUEST",
+        "reason_codes": [
+          "ORDER_NOT_FOUND"
+        ],
+        "approver_role": null,
+        "human_approval_required": false,
+        "amount_usd": null,
+        "ledger_action": "REPLY",
+        "draft_reply": "We could not match this request to the order and customer on file, so we cannot action it as written."
+      },
+      "latency_ms": 10.111,
+      "cost_usd": 0.0,
+      "model_calls": [],
+      "tools_called": [
+        "regex_extractor",
+        "template_reply",
+        "rules_engine",
+        "orders_lookup"
+      ],
+      "documents_used": [
+        {
+          "document": "RP-3.2",
+          "version": "3.2"
+        }
+      ]
+    }
+  ]
+}
