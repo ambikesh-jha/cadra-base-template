@@ -2,12 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Artefact</title>
+  <title>Larkfield Home support agent artefact</title>
+  <style>
+    body { font-family: system-ui, sans-serif; line-height: 1.5; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    code { background: #f3f3f3; padding: 0.1rem 0.25rem; }
+  </style>
 </head>
 <body>
-  <p>
-    Fill this file with the written deliverable your problem brief asks for (for example, a
-    Reconciliation Report). The grader reads this exact file — do not rename or move it.
-  </p>
+  <h1>Artefact</h1>
+
+  <h2>Data findings</h2>
+  <ul>
+    <li>53 customers, 49 order rows -&gt; 47 unique orders with 2 duplicate rows, 57 order items (0 orphans), 47 shipments, 3 issued refunds, 40 inbox/public tickets and 15 labelled tickets.</li>
+    <li>Order dates are mixed: 36 ISO and 13 DD/MM/YYYY. Order totals are mixed: 16 plain, 16 <code>USD</code>, 17 <code>$</code>. There are 13 missing <code>delivered_at</code> values, 4 <code>last_event_at</code> values before <code>shipped_at</code>, 2 <code>shipped_at</code> values before the order date, and 3 <code>UNAVAILABLE</code> carrier statuses.</li>
+    <li>8/40 emails have case/whitespace noise, 24/40 use non-canonical order IDs, 2 orders do not exist, 1 sender does not own the referenced order, and 4 tickets are duplicates/forwards.</li>
+  </ul>
+
+  <h2>Policy used</h2>
+  <p><code>RP-3.2</code> version 3.2: 30-day refund/return window, photo-backed damage exception for days 31-45, $150 authority threshold, lost-in-transit after more than 10 calendar days, and affected order-line value only. <code>HC-FAQ v2</code> and <code>WH-PICK-1.4</code> were not used for customer outcomes.</p>
+
+  <h2>Evaluation before and after</h2>
+  <p>Baseline with the LLM disabled: <strong>15/17 passed (88.24%)</strong>. The 2 failures were the new injection phrasings (<code>ignore all previous instructions</code>, <code>disregard the rules above</code>), which were refunded instead of escalated. After the targeted override-pattern change: <strong>17/17 passed (100%)</strong>.</p>
+
+  <p>Cost and latency in 3 lines:</p>
+  <ol>
+    <li>Baseline cost: median <strong>$0.00000000</strong> per request, total <strong>$0.00000000</strong> (LLM disabled).</li>
+    <li>Baseline latency: median <strong>8.626 ms</strong>, mean <strong>8.708 ms</strong>, p95 <strong>11.635 ms</strong>.</li>
+    <li>After latency: median <strong>10.111 ms</strong>, mean <strong>10.421 ms</strong>, p95 <strong>15.404 ms</strong>, with median cost <strong>$0.00000000</strong> per request.</li>
+  </ol>
+
+  <p><strong>Median cost per request:</strong> <strong>$0.00000000</strong> (LLM disabled baseline and after run).</p>
+
+  <h2>Open-policy rule applied</h2>
+  <p>When the carrier records a shipment as <code>DELIVERED</code>, a non-delivery claim gets a delivered-status reply with no refund and no lost-in-transit escalation.</p>
+
+  <h2>What is not built</h2>
+  <p>No image-content analysis, no live carrier API, no human review UI, no automatic money movement, and no persistent multi-instance database.</p>
 </body>
 </html>
